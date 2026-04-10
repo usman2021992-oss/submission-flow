@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useRef, FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -13,37 +13,47 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
+  const isSubmittingRef = useRef(false)
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (isLoading) return
-    
-    setError(null)
+  e.preventDefault()
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.')
-      return
-    }
+  // 🚫 HARD LOCK (instant)
+  if (isSubmittingRef.current) return
+  isSubmittingRef.current = true
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
-      return
-    }
+  setError(null)
 
-    setIsLoading(true)
-    const supabase = createClient()
-    const { error } = await supabase.auth.signUp({ email, password })
-
-    if (error) {
-      console.error('[Signup]:', error)
-      setError(error.message)
-      setIsLoading(false)
-      return
-    }
-
-    setIsLoading(false)
-    router.push('/dashboard')
+  if (password !== confirmPassword) {
+    setError('Passwords do not match.')
+    isSubmittingRef.current = false
+    return
   }
 
+  if (password.length < 6) {
+    setError('Password must be at least 6 characters.')
+    isSubmittingRef.current = false
+    return
+  }
+
+  setIsLoading(true)
+
+  const supabase = createClient()
+  const { error } = await supabase.auth.signUp({ email, password })
+
+  if (error) {
+    console.error('[Signup]:', error)
+    setError(error.message)
+    setIsLoading(false)
+    isSubmittingRef.current = false
+    return
+  }
+
+  setIsLoading(false)
+  isSubmittingRef.current = false
+
+  router.push('/dashboard')
+}
 
 
   return (
@@ -52,7 +62,7 @@ export default function SignupPage() {
         <div className="bg-white border border-gray-200 rounded-lg p-8">
           <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create account</h1>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <form onSubmit={handleSubmit} className={`space-y-4 ${isLoading ? 'pointer-events-none opacity-80' : ''}`}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -110,13 +120,13 @@ export default function SignupPage() {
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-            >
-              {isLoading ? 'Creating account...' : 'Create account'}
-            </button>
+<button
+  type="submit"
+  disabled={isLoading || !email || !password || !confirmPassword}
+  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+>
+  {isLoading ? 'Creating account...' : 'Create account'}
+</button>
           </form>
 
           <p className="mt-4 text-sm text-gray-500 text-center">

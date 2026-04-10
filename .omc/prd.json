@@ -1,0 +1,160 @@
+{
+  "project": "submission-flow-mvp",
+  "description": "Next.js 14 submission flow web app with Supabase auth, storage, and database",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Project scaffolding and configuration",
+      "passes": true,
+      "acceptanceCriteria": [
+        "package.json exists with next@14, react@18, @supabase/ssr, tailwindcss ✅",
+        "tsconfig.json exists with strict: true ✅",
+        "tailwind.config.ts exists and references src/**/*.{ts,tsx} ✅",
+        "postcss.config.mjs exists ✅",
+        "next.config.ts exists ✅",
+        ".env.local exists with empty Supabase keys ✅",
+        ".env.local.example exists with the same keys ✅",
+        ".gitignore includes .env*.local ✅"
+      ]
+    },
+    {
+      "id": "US-002",
+      "title": "TypeScript types, Supabase clients, and middleware",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/types/index.ts exports SubmissionStatus, SubmissionType, Submission, SubmissionFormData ✅",
+        "src/lib/supabase/client.ts exports createClient() using createBrowserClient ✅",
+        "src/lib/supabase/server.ts exports async createClient() with cookie handling ✅",
+        "src/middleware.ts protects /submit and /dashboard ✅",
+        "src/middleware.ts redirects authenticated users away from /login and /signup ✅",
+        "middleware uses session refresh pattern ✅"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "Database and storage SQL files",
+      "passes": true,
+      "acceptanceCriteria": [
+        "supabase/schema.sql exists with complete submissions table ✅",
+        "supabase/schema.sql includes RLS policies ✅",
+        "supabase/schema.sql includes handle_updated_at trigger ✅",
+        "supabase/schema.sql includes both indexes ✅",
+        "supabase/storage.sql exists with bucket and policies ✅"
+      ]
+    },
+    {
+      "id": "US-004",
+      "title": "Root layout and NavBar component",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/app/layout.tsx exists with NavBar and gray-50 background ✅",
+        "NavBar shows SubmitApp logo linking to / ✅",
+        "NavBar shows email + Log out when authenticated ✅",
+        "NavBar shows Log in + Sign up when not authenticated ✅",
+        "NavBar is sticky top with white background ✅",
+        "Log out calls signOut() and redirects to / ✅",
+        "useEffect uses stable supabase ref (no missing deps) ✅"
+      ]
+    },
+    {
+      "id": "US-005",
+      "title": "StatusBadge component",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/components/StatusBadge.tsx accepts status: SubmissionStatus ✅",
+        "All 4 status colors render correctly ✅",
+        "12px font, 2px 8px padding, 9999px border-radius, font-weight 500 ✅"
+      ]
+    },
+    {
+      "id": "US-006",
+      "title": "Landing page",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/app/page.tsx exists as server component ✅",
+        "Headline and subheadline present ✅",
+        "Unauthenticated: Log in + Sign up buttons ✅",
+        "Authenticated: Go to dashboard button ✅",
+        "Hero section full-width centered ✅"
+      ]
+    },
+    {
+      "id": "US-007",
+      "title": "Login and Signup pages",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/app/login/page.tsx exists with email + password + submit ✅",
+        "Login redirects to /submit on success ✅",
+        "Login shows error.message on failure ✅",
+        "src/app/signup/page.tsx exists with 3 fields ✅",
+        "Signup validates passwords match client-side ✅",
+        "Signup shows confirmation message on success ✅",
+        "Both pages have centered card max-w-[400px] with proper labels ✅"
+      ]
+    },
+    {
+      "id": "US-008",
+      "title": "ImageUploader component",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/components/ImageUploader.tsx with drag-and-drop ✅",
+        "Shows upload icon and instructions in default state ✅",
+        "Validates MIME type and 5MB size limit ✅",
+        "Shows image preview after valid file selected ✅",
+        "Shows filename and file size ✅",
+        "Remove image link clears selection ✅",
+        "role='button' and aria-label='Upload image' ✅"
+      ]
+    },
+    {
+      "id": "US-009",
+      "title": "Submission form with full submit logic",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/app/submit/page.tsx checks auth and renders SubmissionForm ✅",
+        "src/components/SubmissionForm.tsx with all 3 sections ✅",
+        "Type cards with role='radio', aria-checked, keyboard accessible ✅",
+        "ImageUploader integrated ✅",
+        "Identifier input with 40-char limit and live counter ✅",
+        "Submit button disabled until all fields filled ✅",
+        "Submit shows spinner + Saving... during submission ✅",
+        "Upload path is {user_id}/{uuid}.{ext} ✅",
+        "Success state with green checkmark SVG, ID, StatusBadge ✅",
+        "Error messages are user-friendly with form preserved ✅"
+      ]
+    },
+    {
+      "id": "US-010",
+      "title": "Dashboard page",
+      "passes": true,
+      "acceptanceCriteria": [
+        "src/app/dashboard/page.tsx fetches submissions for auth user ✅",
+        "Ordered by created_at desc ✅",
+        "Table with Identifier (mono), Type, Status, Points, Date ✅",
+        "Empty state with link to /submit ✅",
+        "Error state message ✅",
+        "Heading 'Your submissions' ✅"
+      ]
+    },
+    {
+      "id": "US-011",
+      "title": "SETUP.md documentation",
+      "passes": true,
+      "acceptanceCriteria": [
+        "SETUP.md exists with all 5 required sections ✅",
+        "Supabase setup covers schema.sql and storage.sql ✅",
+        "Test checklist covers full flow ✅"
+      ]
+    },
+    {
+      "id": "US-012",
+      "title": "TypeScript compilation passes with no errors",
+      "passes": true,
+      "acceptanceCriteria": [
+        "npx tsc --noEmit exits with code 0 ✅ (verified)",
+        "No 'any' types in any source file ✅ (verified)",
+        "No useEffect with missing dependencies ✅ (NavBar fixed with useRef)"
+      ]
+    }
+  ]
+}

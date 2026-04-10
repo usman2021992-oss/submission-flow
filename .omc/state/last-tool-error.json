@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"supabase db execute --file supabase/schema.sql 2>&1\",\"timeout\":60000,\"description\":\"Apply schema.sql to remote Supabase\"}",
+  "error": "Exit code 1\nUsage:\n  supabase db [command]\n\nAvailable Commands:\n  diff        Diffs the local database for schema changes\n  dump        Dumps data or schemas from the remote database\n  lint        Checks local database for typing error\n  pull        Pull schema from the remote database\n  push        Push new migrations to the remote database\n  reset       Resets the local database to current migrations\n  start       Starts local Postgres database\n\nFlags:\n  -h, --help   help for db\n\nGlobal Flags:...",
+  "timestamp": "2026-04-10T06:57:04.098Z",
+  "retry_count": 1
+}

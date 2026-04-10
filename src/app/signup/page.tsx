@@ -15,6 +15,8 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (isLoading) return
+    
     setError(null)
 
     if (password !== confirmPassword) {

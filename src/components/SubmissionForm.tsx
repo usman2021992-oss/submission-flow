@@ -6,6 +6,7 @@ import ImageUploader from '@/components/ImageUploader'
 import StatusBadge from '@/components/StatusBadge'
 import type { SubmissionType } from '@/types'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface SubmissionFormProps {
   userId: string
@@ -27,6 +28,8 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [success, setSuccess] = useState<SuccessData | null>(null)
+
+  const router = useRouter()
 
   const handleFileSelect = useCallback((file: File | null) => {
     setImageFile(file)
@@ -102,7 +105,11 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
         return
       }
 
-      setSuccess({ id: submission.id })
+  setSuccess({ id: submission.id })
+
+  // Navigate to dashboard so the new submission appears immediately in the list
+  router.push('/dashboard')
+  router.refresh()
     } catch (err) {
       console.error('[SubmissionForm unexpected]:', err)
       setSubmitError('Connection error. Check your internet and try again.')

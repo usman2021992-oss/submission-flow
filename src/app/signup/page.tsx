@@ -2,14 +2,15 @@
 
 import { useState, FormEvent } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -37,30 +38,11 @@ export default function SignupPage() {
       return
     }
 
-    setSuccess(true)
     setIsLoading(false)
+    router.push('/dashboard')
   }
 
-  if (success) {
-    return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[400px]">
-          <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h1>
-            <p className="text-sm text-gray-500">Check your email to confirm your account</p>
-            <Link href="/login" className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-700 font-medium">
-              Back to log in
-            </Link>
-          </div>
-        </div>
-      </main>
-    )
-  }
+
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">

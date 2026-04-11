@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useRef, FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -11,24 +11,44 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const isSubmittingRef = useRef(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (isSubmittingRef.current) return
+    isSubmittingRef.current = true
+
     setError(null)
+
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail) {
+      setError('Email is required.')
+      isSubmittingRef.current = false
+      return
+    }
+    if (!password) {
+      setError('Password is required.')
+      isSubmittingRef.current = false
+      return
+    }
+
     setIsLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password })
 
     if (error) {
       console.error('[Login]:', error)
       setError(error.message)
       setIsLoading(false)
+      isSubmittingRef.current = false
       return
     }
 
-    router.push('/submit')
+    router.push('/dashboard')
     router.refresh()
+    isSubmittingRef.current = false
   }
 
   return (

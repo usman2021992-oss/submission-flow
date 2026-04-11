@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useCallback, DragEvent, ChangeEvent } from 'react'
+import { useRef, useState, useCallback, useEffect, DragEvent, ChangeEvent } from 'react'
 
 interface ImageUploaderProps {
   onFileSelect: (file: File | null) => void
@@ -21,6 +21,12 @@ export default function ImageUploader({ onFileSelect, error }: ImageUploaderProp
   const [validationError, setValidationError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
 
   const handleFile = useCallback(
     (file: File) => {

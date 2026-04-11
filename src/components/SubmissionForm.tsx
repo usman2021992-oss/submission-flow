@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useCallback, KeyboardEvent } from 'react'
+
 import { createClient } from '@/lib/supabase/client'
 import ImageUploader from '@/components/ImageUploader'
 import StatusBadge from '@/components/StatusBadge'
 import type { SubmissionType } from '@/types'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 interface SubmissionFormProps {
   userId: string
@@ -28,8 +28,7 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [success, setSuccess] = useState<SuccessData | null>(null)
-
-  const router = useRouter()
+  const [uploaderKey, setUploaderKey] = useState(0)
 
   const handleFileSelect = useCallback((file: File | null) => {
     setImageFile(file)
@@ -105,11 +104,8 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
         return
       }
 
-  setSuccess({ id: submission.id })
-
-  // Navigate to dashboard so the new submission appears immediately in the list
-  router.push('/dashboard')
-  router.refresh()
+      setIsSubmitting(false)
+      setSuccess({ id: submission.id })
     } catch (err) {
       console.error('[SubmissionForm unexpected]:', err)
       setSubmitError('Connection error. Check your internet and try again.')
@@ -124,6 +120,7 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
     setSubmitError(null)
     setSuccess(null)
     setIsSubmitting(false)
+    setUploaderKey((k) => k + 1)
   }
 
   if (success) {
@@ -212,7 +209,7 @@ export default function SubmissionForm({ userId }: SubmissionFormProps) {
       {/* Section 2: Image Upload */}
       <section className="bg-white border border-gray-200 rounded-lg p-6">
         <h2 className="text-base font-semibold text-gray-900 mb-4">Image</h2>
-        <ImageUploader onFileSelect={handleFileSelect} />
+        <ImageUploader key={uploaderKey} onFileSelect={handleFileSelect} />
       </section>
 
       {/* Section 3: Identifier */}
